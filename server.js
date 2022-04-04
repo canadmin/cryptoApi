@@ -8,14 +8,15 @@ const cron = require('node-cron');
 let fs = require('fs');
 const Path = require("path");
 let  coins = fs.readFileSync('symbol.txt').toString().split(",");
-console.log(coins.slice(0, 100))
 const PORT = process.env.PORT || 4000;
 const json = require("./ff.json");
 
+console.log(Object.values(json.data)[0][0].logo)
+let coinAsset = Object.values(json.data);
+console.log(coinAsset.length)
 const createAssetParam = (begin,end) => {
     console.log(begin,end)
     let params = coins.slice(begin,end).join(",");
-    console.log(params,"asdsd")
     return params;
 }
 
@@ -31,32 +32,18 @@ const downloadImage = async (url,name) => {
 
 
 const getCoinMarketCapAsset = async () => {
-    for(let i = 0; i <= 30; i++){
-        let start = i; //0
-        let end = i+99; // 100
-        await axios.get('https://pro-api.coinmarketcap.com/v2/cryptocurrency/info',{
-                params: {
-                    symbol:createAssetParam(start,end).toString()
-                },
-                headers: { 'X-CMC_PRO_API_KEY': '317a57dd-d611-4a27-999a-21863c41e420' }
-            },
-        ).then(suc => {
-
-            let jsonff = Object.values(JSON.parse((suc).data))
-            for (let f = 0; f < jsonff.length; f++) {
-                 let currentData = jsonff[f][0];
-                console.log(currentData)
-                 downloadImage(currentData.logo,currentData.symbol)
-            }
-        }).catch(err => {
-            console.log(err)
-        });
-
-        i*=100;
+    for(let i = 0; i < 30; i++){
+        let start = i*100; //0
+        let end = i*100+99; // 100
+        console.log(createAssetParam(start,end).toString());
+        console.log("-------------")
     }
-
 }
-getCoinMarketCapAsset()
+
+for (let i = 0; i <coinAsset.length ; i++) {
+    downloadImage(coinAsset[i][0].logo,coinAsset[i][0].symbol)
+}
+//getCoinMarketCapAsset()
 
 // const ccxws =  require("ccxws");
 // const binance = new ccxws.BinanceClient();
