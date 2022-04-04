@@ -9,25 +9,25 @@ let fs = require('fs');
 const Path = require("path");
 let  coins = fs.readFileSync('symbol.txt').toString().split(",");
 const PORT = process.env.PORT || 4000;
-const json = require("./ff.json");
-
-console.log(Object.values(json.data)[0][0].logo)
-let coinAsset = Object.values(json.data);
-console.log(coinAsset.length)
-const createAssetParam = (begin,end) => {
-    console.log(begin,end)
-    let params = coins.slice(begin,end).join(",");
-    return params;
-}
-
-const downloadImage = async (url,name) => {
-    const path = Path.resolve(__dirname,'logos',name+'.png');
-    const response = await axios({
-        method:'GET',
-        url:url,
-        responseType: 'stream'
-    })
-    response.data.pipe(fs.createWriteStream(path));
+// const json = require("./ff.json");
+//
+// console.log(Object.values(json.data)[0][0].logo)
+// let coinAsset = Object.values(json.data);
+// console.log(coinAsset.length)
+// const createAssetParam = (begin,end) => {
+//     console.log(begin,end)
+//     let params = coins.slice(begin,end).join(",");
+//     return params;
+// }
+//
+// const downloadImage = async (url,name) => {
+//     const path = Path.resolve(__dirname,'logos',name+'.png');
+//     const response = await axios({
+//         method:'GET',
+//         url:url,
+//         responseType: 'stream'
+//     })
+//     response.data.pipe(fs.createWriteStream(path));
 }
 
 
@@ -40,25 +40,25 @@ const getCoinMarketCapAsset = async () => {
     }
 }
 
-for (let i = 0; i <coinAsset.length ; i++) {
-    downloadImage(coinAsset[i][0].logo,coinAsset[i][0].symbol)
-}
+// for (let i = 0; i <coinAsset.length ; i++) {
+//     downloadImage(coinAsset[i][0].logo,coinAsset[i][0].symbol)
+// }
 //getCoinMarketCapAsset()
 
-// const ccxws =  require("ccxws");
-// const binance = new ccxws.BinanceClient();
-//
-// const market = {
-//     id: "BTCUSDT", // remote_id used by the exchange
-//     base: "BTC", // standardized base symbol for Bitcoin
-//     quote: "USDT", // standardized quote symbol for Tether
-// };
-//
-// // handle trade events
-// binance.on("trade", trade => console.log(trade));
-//
-// // handle level2 orderbook snapshots
-// binance.on("l2snapshot", snapshot => console.log(snapshot));
+const ccxws =  require("ccxws");
+const binance = new ccxws.BinanceClient();
+
+const market = {
+    id: "BTCUSDT", // remote_id used by the exchange
+    base: "BTC", // standardized base symbol for Bitcoin
+    quote: "USDT", // standardized quote symbol for Tether
+};
+
+// handle trade events
+binance.on("trade", trade => console.log(trade));
+
+// handle level2 orderbook snapshots
+binance.on("l2snapshot", snapshot => console.log(snapshot));
 //
 // // subscribe to trades
 // binance.subscribeTrades(market);
