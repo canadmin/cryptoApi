@@ -6,28 +6,108 @@ const redis = require('redis');
 const cron = require('node-cron');
 
 let fs = require('fs');
+const Path = require("path");
 let  coins = fs.readFileSync('symbol.txt').toString().split(",");
-console.log(coins.slice(0, 10))
+console.log(coins.slice(0, 100))
 const PORT = process.env.PORT || 4000;
-//const REDIS_PORT = process.env.PORT || 6379;
-let WebSocket = require("ws");
-const wss = new WebSocket('wss://ws-feed.pro.coinbase.com')
+const json = require("./ff.json");
 
-let msg = {
-    type: "subscribe",
-    product_ids: ["CAKE-USD"],
-    channels: ["matches"]
-};
-let jsonMsg = JSON.stringify(msg);
-wss.onopen = () => {
-    console.log('Subscribing: BTCUSD');
-    wss.send(JSON.stringify(
-        msg
-    ));
+const createAssetParam = (begin,end) => {
+    console.log(begin,end)
+    let params = coins.slice(begin,end).join(",");
+    console.log(params,"asdsd")
+    return params;
 }
-wss.onmessage = (msg) => {
-    console.log(msg.data)
+
+const downloadImage = async (url,name) => {
+    const path = Path.resolve(__dirname,'logos',name+'.png');
+    const response = await axios({
+        method:'GET',
+        url:url,
+        responseType: 'stream'
+    })
+    response.data.pipe(fs.createWriteStream(path));
 }
+
+
+const getCoinMarketCapAsset = async () => {
+    for(let i = 0; i <= 30; i++){
+        let start = i; //0
+        let end = i+99; // 100
+        await axios.get('https://pro-api.coinmarketcap.com/v2/cryptocurrency/info',{
+                params: {
+                    symbol:createAssetParam(start,end).toString()
+                },
+                headers: { 'X-CMC_PRO_API_KEY': '317a57dd-d611-4a27-999a-21863c41e420' }
+            },
+        ).then(suc => {
+
+            let jsonff = Object.values(JSON.parse((suc).data))
+            for (let f = 0; f < jsonff.length; f++) {
+                 let currentData = jsonff[f][0];
+                console.log(currentData)
+                 downloadImage(currentData.logo,currentData.symbol)
+            }
+        }).catch(err => {
+            console.log(err)
+        });
+
+        i*=100;
+    }
+
+}
+getCoinMarketCapAsset()
+
+// const ccxws =  require("ccxws");
+// const binance = new ccxws.BinanceClient();
+//
+// const market = {
+//     id: "BTCUSDT", // remote_id used by the exchange
+//     base: "BTC", // standardized base symbol for Bitcoin
+//     quote: "USDT", // standardized quote symbol for Tether
+// };
+//
+// // handle trade events
+// binance.on("trade", trade => console.log(trade));
+//
+// // handle level2 orderbook snapshots
+// binance.on("l2snapshot", snapshot => console.log(snapshot));
+//
+// // subscribe to trades
+// binance.subscribeTrades(market);
+//const REDIS_PORT = process.env.PORT || 6379;
+// let WebSocket = require("ws");
+// let wss = new WebSocket('wss://ws-feed.pro.coinbase.com')
+//
+// let msg = {
+//     type: "subscribe",
+//     product_ids: ["BTC-USD"],
+//     channels: ["matches"]
+// };
+// let jsonMsg = JSON.stringify(msg);
+// wss.onopen = () => {
+//     console.log('Subscribing: VET-USD');
+//     wss.send(JSON.stringify(
+//         msg
+//     ));
+// }
+// wss.onmessage = (msg) => {
+//     if(msg.data.type === "error" && msg.data.type === "subscriptions"){
+//         let currentCurrency = "shib";
+//         console.log("unsss")
+//         console.log("unsss")
+//         //let wss2 = new WebSocket('wss://stream.binance.com:9443/ws/' + currentCurrency +'usd@trade')
+//         wss.send(JSON.stringify(
+//             {
+//                 type: "unsubscribe",
+//                 product_ids: ["VET-USD"],
+//                 channels: ["matches"]
+//             }
+//         ))
+//     }
+//     console.log(msg.data)
+// }
+
 
 const client = redis.createClient({url: 'redis://127.0.0.1:6379'});
 client.connect();
@@ -67,12 +147,6 @@ client.connect();
 //     });
 // })
 
-
-const createFSYMS = () => {
-    let currencyParam = "";
-
-    coins.forEach()
-}
 
 const getCurrenciesData = (req, res, next) => {
     const {limitname} = req.params;
