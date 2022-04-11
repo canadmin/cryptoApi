@@ -21,7 +21,7 @@ const createAssetParam = (begin,end) => {
     return params;
 }
 
-//crypto compare atacağım request için semboller çekceğim yer
+//crypto compare atacağım request için semboller çekceğim yer 5 dk bir 500 tane için
 let coins = fs.readFileSync('symbol.txt').toString().split(",");
 cron.schedule('*/5 * * * *', async () => {
     const cronRedisClient = redis.createClient({
@@ -55,7 +55,7 @@ cron.schedule('*/5 * * * *', async () => {
     cronRedisClient.quit();
 });
 
-// coinmarketcaptan çekilen verilerin
+// coinmarketcaptan çekilen verilerin 4 saatte bir
 schedule.scheduleJob('0 */4 * * *', () => {
     const cronRedisClient = redis.createClient({
         url: 'redis://127.0.0.1:6379'
@@ -73,34 +73,31 @@ schedule.scheduleJob('0 */4 * * *', () => {
         let data = suc.data.data;
         console.log(data)
         data.forEach(item => {
-            let key = item.symbol + '/cmc';
+            let key = item.symbol + '-cmc';
             cronRedisClient.set(key,JSON.stringify(item));
         })
-        res.send(data)
-    }).catch(err => {
-        console.log(err)
-    });
+    }).then(() => {
+        cronRedisClient.quit();
+    }).catch((err) => {
+        console.log(err.toString());
+    })
 })
 
 
-
-const getCurrenciesData = (req, res, next) => {
-    const {limitname} = req.params;
-    client.get(limitname.toString, (err, data) => {
-        if (err) throw err;
-        data = JSON.parse(data);
-        console.log(data)
-        if (data !== null) {
-            res.send(data);
-        } else {
-            next();
-        }
-    })
-    res.send(limitname)
+const getCurrenciesDataFromCryptoCompare = async (req, res, next) => {
+    const {symbol} = req.params;
+    const value = await client.get(symbol)
+    res.send(JSON.parse(value));
+}
+const getCryptoCurrencyInfo = async (req, res, next) => {
+    const {symbol} = req.params;
+    const value = await client.get(symbol+'-cmc')
+    res.send(JSON.parse(value));
 }
 
 
-app.get('/currencies/:limitname', getCurrenciesData)
+app.get('/currency/:symbol',getCurrenciesDataFromCryptoCompare)
+app.get('/cryptoInfo/:symbol',getCryptoCurrencyInfo)
 
 
 let server = app.listen(PORT, function () {
