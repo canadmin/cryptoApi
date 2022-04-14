@@ -139,8 +139,7 @@ const getCryptoCurrencyInfo = async (req, res, next) => {
     try {
         const symbols = req.query.symbol.toString().split(",");
         await Promise.all(symbols.map(async (item) => {
-            const value = await client.get(item+'-cmc');
-            console.log(value)
+            const value = await client.get(item.toUpperCase()+'-cmc');
             coinsList.push(JSON.parse(value));
         }))
 
