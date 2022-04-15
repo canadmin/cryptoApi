@@ -20,7 +20,7 @@ const createAssetParam = (begin, end) => {
 }
 
 //crypto compare atacağım request için semboller çekceğim yer 5 dk bir 500 tane için
-cron.schedule('*/5 * * * *', async () => {
+cron.schedule('*/10 * * * *', async () => {
     const cronRedisClient = redis.createClient({
         url: 'redis://127.0.0.1:6379'
     });
@@ -30,7 +30,6 @@ cron.schedule('*/5 * * * *', async () => {
     for (let i = 0; i < 9; i++) {
         let start = i * 60;
         let end = i * 60 + 59;
-        console.log("-------------")
         let a = await axios.get('https://min-api.cryptocompare.com/data/pricemulti', {
                 params: {
                     "fsyms": createAssetParam(start, end),
@@ -40,8 +39,6 @@ cron.schedule('*/5 * * * *', async () => {
             },
         ).then(success => {
             let result = Object.keys(success.data).map((key) => ({symbol: key, price: success.data[key]["USD"]}));
-
-            console.log(result)
 
             result.forEach(item => {
                 cronRedisClient.set(item.symbol, JSON.stringify(item.price));
@@ -71,7 +68,6 @@ schedule.scheduleJob('0 */4 * * *', () => {
         cronRedisClient.set('top5', JSON.stringify(data.slice(0, 5)))
         cronRedisClient.set('top100', JSON.stringify(data.slice(0, 100)));
         cronRedisClient.set('all', JSON.stringify(data));
-        console.log(data)
         data.forEach(item => {
             let key = item.symbol + '-cmc';
             cronRedisClient.set(key, JSON.stringify(item));
@@ -102,12 +98,9 @@ const getImageToCache = () => {
         let data = suc.data.data;
         let result = Object.keys(data).map((key) => ({symbol: key, logo: data[key][0]["logo"]}));
 
-        console.log(result)
-
         result.forEach(item => {
             cronRedisClient.set(item.symbol+'-img', JSON.stringify(item.logo));
         })
-
         }).then(() => {
         cronRedisClient.quit();
     }).catch((err) => {
@@ -139,8 +132,10 @@ const getCryptoCurrencyInfo = async (req, res, next) => {
     try {
         const symbols = req.query.symbol.toString().split(",");
         await Promise.all(symbols.map(async (item) => {
-            const value = await client.get(item.toUpperCase()+'-cmc');
-            coinsList.push(JSON.parse(value));
+            if(item !== ''){
+                const value = await client.get(item.toUpperCase()+'-cmc');
+                coinsList.push(JSON.parse(value));
+            }
         }))
 
         res.send(coinsList)
@@ -156,7 +151,6 @@ const getCryptoCurrencyInfo = async (req, res, next) => {
 const getCurrencies = async (req, res, params) => {
     try {
         const listType = req.query.listType;
-        console.log(req.query)
         const currencies = await client.get(listType)
         res.send(JSON.parse(currencies));
     } catch (e) {
