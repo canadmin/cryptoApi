@@ -11,7 +11,7 @@ let coins = fs.readFileSync('symbol.txt').toString().split(",");
 
 const PORT = process.env.PORT || 4000;
 const redisUrl = 'redis://clustercryptocache.6v08eh.0001.euc1.cache.amazonaws.com:6379';
-const client = redis.createClient({url: redisUrl});
+const client = redis.createClient({url: 'redis://cryptocache.6v08eh.0001.euc1.cache.amazonaws.com:6379'});
 client.connect();
 
 const createAssetParam = (begin, end) => {
