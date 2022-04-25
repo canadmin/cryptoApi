@@ -20,36 +20,16 @@ const createAssetParam = (begin, end) => {
 }
 
 //crypto compare atacağım request için semboller çekceğim yer 5 dk bir 500 tane için
-cron.schedule('*/10 * * * *', async () => {
-    const cronRedisClient = redis.createClient({
-        url: 'redis://127.0.0.1:6379'
-    });
-    cronRedisClient.on('error', (err) => console.log('Redis Client Error', err));
-    cronRedisClient.connect();
-
-    for (let i = 0; i < 9; i++) {
-        let start = i * 60;
-        let end = i * 60 + 59;
-        let a = await axios.get('https://min-api.cryptocompare.com/data/pricemulti', {
-                params: {
-                    "fsyms": createAssetParam(start, end),
-                    "tsyms": "USD"
-                },
-                headers: {'authorization': 'Apikey fb038205cb6d80e18ac6478c3674937f528382d8030e7aea6bca3edb9282a68a'}
-            },
-        ).then(success => {
-            let result = Object.keys(success.data).map((key) => ({symbol: key, price: success.data[key]["USD"]}));
-
-            result.forEach(item => {
-                cronRedisClient.set(item.symbol, JSON.stringify(item.price));
-            })
-        })
-    }
-    cronRedisClient.quit();
+cron.schedule('*/1 * * * *', async () => {
+    getPriceList();
 });
 
 // coinmarketcaptan çekilen verilerin 4 saatte bir
 schedule.scheduleJob('0 */4 * * *', () => {
+    getCurrencyList();
+})
+
+const getCurrencyList = () => {
     const cronRedisClient = redis.createClient({
         url: 'redis://127.0.0.1:6379'
     });
@@ -77,8 +57,36 @@ schedule.scheduleJob('0 */4 * * *', () => {
     }).catch((err) => {
         console.log(err.toString());
     })
-})
+}
 
+const getPriceList = async () => {
+    console.log("CurrencyList");
+    const cronRedisClient = redis.createClient({
+        url: 'redis://127.0.0.1:6379'
+    });
+    cronRedisClient.on('error', (err) => console.log('Redis Client Error', err));
+    cronRedisClient.connect();
+
+    for (let i = 0; i < 9; i++) {
+        let start = i * 60;
+        let end = i * 60 + 59;
+        let a = await axios.get('https://min-api.cryptocompare.com/data/pricemulti', {
+                params: {
+                    "fsyms": createAssetParam(start, end),
+                    "tsyms": "USD"
+                },
+                headers: {'authorization': 'Apikey fb038205cb6d80e18ac6478c3674937f528382d8030e7aea6bca3edb9282a68a'}
+            },
+        ).then(success => {
+            let result = Object.keys(success.data).map((key) => ({symbol: key, price: success.data[key]["USD"]}));
+
+            result.forEach(item => {
+                cronRedisClient.set(item.symbol, JSON.stringify(item.price));
+            })
+        })
+    }
+    cronRedisClient.quit();
+}
 
 const getImageToCache = () => {
     const cronRedisClient = redis.createClient({
@@ -169,12 +177,18 @@ const getImageFromCache = async (req, res, params) => {
         res.send(JSON.parse(e));
     }
 }
-
+const initApi = (req,res,params) => {
+        getPriceList();
+        getCurrencyList();
+        res.send("succes")
+}
+app.get('/initApi',initApi);
 
 app.get('/currency', getCurrencyFromOtherSources); //crypto compare üzerinden getirir
 app.get('/cryptoInfo', getCryptoCurrencyInfo); // sadece bir coinin değerini getirir
 app.get('/currencies', getCurrencies); // top 10 top 100 şekilde data getirir
 app.get('/getImage',getImageFromCache);
+
 
 let server = app.listen(PORT, function () {
     var host = server.address().address
