@@ -20,7 +20,7 @@ const createAssetParam = (begin, end) => {
 }
 
 //crypto compare atacağım request için semboller çekceğim yer 5 dk bir 500 tane için
-cron.schedule('*/1 * * * *', async () => {
+cron.schedule('*/10 * * * *', async () => {
     getPriceList();
 });
 
