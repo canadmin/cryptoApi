@@ -10,8 +10,8 @@ const Path = require("path");
 let coins = fs.readFileSync('symbol.txt').toString().split(",");
 
 const PORT = process.env.PORT || 4000;
-
-const client = redis.createClient({url: 'redis://127.0.0.1:6379'});
+const redisUrl = 'clustercryptocache.6v08eh.0001.euc1.cache.amazonaws.com:6379';
+const client = redis.createClient({url: redisUrl});
 client.connect();
 
 const createAssetParam = (begin, end) => {
@@ -31,7 +31,7 @@ schedule.scheduleJob('0 */4 * * *', () => {
 
 const getCurrencyList = () => {
     const cronRedisClient = redis.createClient({
-        url: 'redis://127.0.0.1:6379'
+        url: redisUrl
     });
     cronRedisClient.on('error', (err) => console.log('Redis Client Error', err));
     cronRedisClient.connect();
@@ -62,7 +62,7 @@ const getCurrencyList = () => {
 const getPriceList = async () => {
     console.log("CurrencyList");
     const cronRedisClient = redis.createClient({
-        url: 'redis://127.0.0.1:6379'
+        url: redisUrl
     });
     cronRedisClient.on('error', (err) => console.log('Redis Client Error', err));
     cronRedisClient.connect();
@@ -90,7 +90,7 @@ const getPriceList = async () => {
 
 const getImageToCache = () => {
     const cronRedisClient = redis.createClient({
-        url: 'redis://127.0.0.1:6379'
+        url: redisUrl
     });
     cronRedisClient.on('error', (err) => console.log('Redis Client Error', err));
     cronRedisClient.connect();
