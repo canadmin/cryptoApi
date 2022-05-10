@@ -10,8 +10,8 @@ const Path = require("path");
 let coins = fs.readFileSync('symbol.txt').toString().split(",");
 
 const PORT = process.env.PORT || 4000;
-const redisUrl = 'redis://cryptocache.6v08eh.0001.euc1.cache.amazonaws.com:6379';
-const client = redis.createClient({url: 'redis://cryptocache.6v08eh.0001.euc1.cache.amazonaws.com:6379'});
+const redisUrl = 'redis://127.0.0.1:6379';
+const client = redis.createClient({url: 'redis://127.0.0.1:6379'});
 client.connect();
 
 const createAssetParam = (begin, end) => {
