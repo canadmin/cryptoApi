@@ -178,10 +178,6 @@ const getImageFromCache = async (req, res, params) => {
     }
 }
 
-const sayHello =  (req, res, params) => {
-
-    res.send("<html><marquee>MERVE'M</marquee></html>")
-}
 const initApi = (req,res,params) => {
         getPriceList();
         getCurrencyList();
@@ -193,7 +189,6 @@ app.get('/currency', getCurrencyFromOtherSources); //crypto compare üzerinden g
 app.get('/cryptoInfo', getCryptoCurrencyInfo); // sadece bir coinin değerini getirir
 app.get('/currencies', getCurrencies); // top 10 top 100 şekilde data getirir
 app.get('/getImage',getImageFromCache);
-app.get('/',sayHello);
 
 
 let server = app.listen(PORT, function () {
