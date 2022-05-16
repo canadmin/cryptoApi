@@ -79,7 +79,6 @@ const getPriceList = async () => {
             },
         ).then(success => {
             let result = Object.keys(success.data).map((key) => ({symbol: key, price: success.data[key]["USD"]}));
-
             result.forEach(item => {
                 cronRedisClient.set(item.symbol, JSON.stringify(item.price));
             })
@@ -134,6 +133,52 @@ const getCurrencyFromOtherSources = async (req, res, next) => {
 }
 
 
+
+
+// coinmarketCap'in sunduğu şekilde datayı getirir
+const getCryptoCurrencyInfoForPortfolio = async (req, res, next) => {
+    let coinsList = [];
+    let isNotExistingCoinInCache = false;
+    let notExistingCoin = [];
+    try {
+        const symbols = req.query.symbol.toString().split(",");
+        await Promise.all(symbols.map(async (item) => {
+            if(item !== ''){
+                const value = await client.get(item.toUpperCase());
+                if(value){
+                    coinsList.push({symbol:item.toUpperCase(),value:JSON.parse(value)});
+                }else {
+                    isNotExistingCoinInCache = true;
+                    notExistingCoin.push(item.toUpperCase());
+                }
+            }
+        }))
+        if(isNotExistingCoinInCache){
+             await axios.get('https://min-api.cryptocompare.com/data/pricemulti', {
+                    params: {
+                        "fsyms": notExistingCoin.join(","),
+                        "tsyms": "USD"
+                    },
+                    headers: {'authorization': 'Apikey fb038205cb6d80e18ac6478c3674937f528382d8030e7aea6bca3edb9282a68a'}
+                },
+            ).then(success => {
+                let result = Object.keys(success.data).map((key) => ({symbol: key, price: success.data[key]["USD"]}));
+                result.forEach(item => {
+                    coinsList.push({symbol:item.symbol,price:JSON.stringify(item.price)})
+                })
+            }).then(()=> {
+                res.send(coinsList)
+             })
+        }else{
+            res.send(coinsList)
+        }
+    } catch (e) {
+        console.log(e)
+        res.send((e));
+    }
+}
+
+
 // coinmarketCap'in sunduğu şekilde datayı getirir
 const getCryptoCurrencyInfo = async (req, res, next) => {
     let coinsList = [];
@@ -145,14 +190,11 @@ const getCryptoCurrencyInfo = async (req, res, next) => {
                 coinsList.push(JSON.parse(value));
             }
         }))
-
         res.send(coinsList)
-
     } catch (e) {
         console.log(e)
         res.send((e));
     }
-
 }
 
 // top 10 top 100 all şeklinde datayı getirir
@@ -184,11 +226,11 @@ const initApi = (req,res,params) => {
         res.send("succes")
 }
 app.get('/initApi',initApi);
-
 app.get('/currency', getCurrencyFromOtherSources); //crypto compare üzerinden getirir
 app.get('/cryptoInfo', getCryptoCurrencyInfo); // sadece bir coinin değerini getirir
 app.get('/currencies', getCurrencies); // top 10 top 100 şekilde data getirir
 app.get('/getImage',getImageFromCache);
+app.get('/getPortfolio',getCryptoCurrencyInfoForPortfolio);
 
 
 let server = app.listen(PORT, function () {
