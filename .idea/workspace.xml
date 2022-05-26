@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="5857616e-f74b-4cab-b720-19162f100df7" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server.js" beforeDir="false" afterPath="$PROJECT_DIR$/server.js" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectId" id="27F1eJkF3vZcRmCwE9igAJ39whF" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="nodejs_package_manager_path" value="npm" />
+    <property name="ts.external.directory.path" value="$APPLICATION_HOME_DIR$/plugins/JavaScriptLanguage/jsLanguageServicesImpl/external" />
+    <property name="vue.rearranger.settings.migration" value="true" />
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="5857616e-f74b-4cab-b720-19162f100df7" name="Default Changelist" comment="" />
+      <created>1648901115474</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1648901115474</updated>
+      <workItem from="1648901117587" duration="4145000" />
+      <workItem from="1649065775979" duration="11920000" />
+      <workItem from="1649102418775" duration="7649000" />
+      <workItem from="1649719851491" duration="613000" />
+      <workItem from="1649791638369" duration="701000" />
+      <workItem from="1649801898605" duration="49000" />
+      <workItem from="1649852746533" duration="4999000" />
+      <workItem from="1649875313994" duration="4930000" />
+      <workItem from="1649935920393" duration="16356000" />
+      <workItem from="1650021357276" duration="2304000" />
+      <workItem from="1650190587923" duration="1177000" />
+      <workItem from="1650268954265" duration="5000" />
+      <workItem from="1650376364083" duration="3128000" />
+      <workItem from="1650459964851" duration="8000" />
+      <workItem from="1650797440620" duration="1959000" />
+      <workItem from="1650835284139" duration="180000" />
+      <workItem from="1650894317927" duration="6636000" />
+      <workItem from="1650972146678" duration="572000" />
+      <workItem from="1651153570128" duration="7367000" />
+      <workItem from="1652003755615" duration="1055000" />
+      <workItem from="1652179595005" duration="2629000" />
+      <workItem from="1652355075346" duration="958000" />
+      <workItem from="1652369738444" duration="340000" />
+      <workItem from="1652570072092" duration="984000" />
+      <workItem from="1652695863187" duration="1000000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="FILTERS">
+                <map>
+                  <entry key="branch">
+                    <value>
+                      <list>
+                        <option value="origin/uat" />
+                      </list>
+                    </value>
+                  </entry>
+                </map>
+              </option>
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="oldMeFiltersMigrated" value="true" />
+  </component>
+</project>
